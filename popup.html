@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+  <div class="header">
+    <div class="logo">Overleaf Cookie Inspector</div>
+  </div>
+
+  <div id="noCookie" style="display: none; padding: 24px; text-align: center; color: #6c757d;">
+    No Overleaf session cookie found.
+  </div>
+
+  <div id="cookieDisplay" style="display: none;">
+    <div class="cookie-container">
+      <div class="cookie-header">
+        <span id="cookieTitle">cookie</span>
+      </div>
+      <div class="cookie-content">
+        <div class="cookie-value-container">
+          <div class="cookie-value" id="cookieValue">Loading...</div>
+        </div>
+        <button class="copy-btn" id="copyBtn">Copy</button>
+        <div class="cookie-details">
+          <div class="cookie-detail">
+            <span class="detail-label">Expires:</span>
+            <span class="detail-value" id="cookieExpires">-</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
