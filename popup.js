@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
   const copyBtn = document.getElementById('copyBtn');
   const cookieDisplay = document.getElementById('cookieDisplay');
-  const noCookie = document.getElementById('noCookie');
   let currentCookieValue = '';
 
   function formatExpiry(expires) {
@@ -30,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function displayCookie(cookieData) {
     const cookieValue = document.getElementById('cookieValue');
     const cookieExpires = document.getElementById('cookieExpires');
+    const cookieDetails = document.querySelector('.cookie-details');
 
     const formattedValue = `overleaf_session2=${cookieData.value}`;
     currentCookieValue = formattedValue;
@@ -38,7 +38,23 @@ document.addEventListener('DOMContentLoaded', function () {
     cookieExpires.textContent = formatExpiry(cookieData.expirationDate || cookieData.expires);
 
     cookieDisplay.style.display = 'block';
-    if (noCookie) noCookie.style.display = 'none';
+    if (copyBtn) copyBtn.style.display = 'block';
+    if (cookieDetails) cookieDetails.style.display = 'block';
+  }
+
+  function displayNoCookie() {
+    const cookieValue = document.getElementById('cookieValue');
+    const cookieDetails = document.querySelector('.cookie-details');
+
+    currentCookieValue = '';
+    if (cookieValue) {
+      cookieValue.innerHTML =
+        'Visit <a href="https://www.overleaf.com" target="_blank" rel="noreferrer">overleaf.com</a> and login to get a valid cookie.';
+    }
+
+    cookieDisplay.style.display = 'block';
+    if (copyBtn) copyBtn.style.display = 'none';
+    if (cookieDetails) cookieDetails.style.display = 'none';
   }
 
   function getCurrentOverleafCookies() {
@@ -52,14 +68,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (response && response.success && response.sessionCookie) {
         displayCookie(response.sessionCookie);
-      } else if (noCookie) {
-        noCookie.style.display = 'block';
-        cookieDisplay.style.display = 'none';
+      } else {
+        displayNoCookie();
       }
     });
   }
 
-  // Use Clipboard API in popup context (reliable and permission-friendly)
   copyBtn.addEventListener('click', async function () {
     if (!currentCookieValue) {
       return;
@@ -81,18 +95,17 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   });
 
-
-  function checkForDetectedCookie() {
-    chrome.runtime.sendMessage({
-      action: 'getLastCookie'
-    }, (response) => {
-      if (response && response.success && response.cookie) {
-        displayCookie(response.cookie.parsed);
+  function ensureOverleafTabThenFetch() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const url = tabs?.[0]?.url || '';
+      const onOverleaf = /^https:\/\/(?:[^/]+\.)?overleaf\.com\/?/i.test(url);
+      if (!onOverleaf) {
+        displayNoCookie();
+        return;
       }
+
+      getCurrentOverleafCookies();
     });
   }
-
-  // Auto-fetch on open to avoid manual action
-  getCurrentOverleafCookies();
-  checkForDetectedCookie();
+  ensureOverleafTabThenFetch();
 });

@@ -1,18 +1,18 @@
 {
   "manifest_version": 3,
-  "name": "Overleaf Cookie Reader",
-  "version": "1.0",
-  "description": "Specifically monitors overleaf_session2 cookie on the Overleaf projects page. Made to works with Overleaf Workshop VSCode extension.",
+  "name": "Overleaf Workshop Cookie Retriever",
+  "version": "1.1",
+  "description": "A Chromium extension that retrieves cookies for Overleaf Workshop VSCode extension.",
   "permissions": [
-    "webRequest",
-    "cookies"
+    "cookies",
+    "tabs"
   ],
   "host_permissions": [
     "https://*.overleaf.com/*"
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Overleaf Cookie Inspector"
+    "default_title": "Overleaf Workshop Cookie Retriever"
   },
   "background": {
     "service_worker": "background.js"
